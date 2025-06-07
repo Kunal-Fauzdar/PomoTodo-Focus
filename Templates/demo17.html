@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modern To-Do List</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <style>
+        /* Full-Screen Video Background */
+        body, html {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            overflow-y: auto;
+        }
+
+        .video-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -1;
+        }
+
+        
+
+        
+
+        /* Task Container */
+        .task-container {
+            height : 85%;
+            width: 77%;
+            padding: 25px;
+            padding-left:50px;
+            border-radius: 25px;
+            margin-top: 7%;
+            /*backdrop-filter: blur(15px);*/
+            background-color:#191414;
+            color: white;
+            position: absolute;
+            top: 40%;
+            left: 57%;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            transition: left 0.3s ease-in-out;
+            overflow-x: auto;
+            
+        }
+
+        .task {
+            width:250px;
+            background: rgba(255, 255, 255, 0.05);
+            box-shadow: 1px 1px 0px  rgba(240, 248, 255, 0.368);
+            padding: 15px;
+            border-radius: 10px;
+            margin:15px 0px;
+            transition : 0.2s linear;
+        }
+
+        .task:hover{
+            box-shadow: 1px 3px 0px  rgba(240, 248, 255, 0.368);
+            transform:scale(1.05);
+        }
+        
+
+        .task-title {
+            font-weight: 600;
+            font-size: 20px;
+            display: inline-block;
+            
+        }
+
+        .task-desc{
+            color:#f0f8ffdc;
+            font-size: 17px;
+        }
+
+        .task-date{
+            color:red;
+            display: inline-block;
+        }
+
+        .task-pomo{
+            color:#19d419;
+            float:right
+        }
+
+        #revive{
+            color:hwb(211 9% 11%);
+            font-family:'Times New Roman', Times, serif;
+            font-size:25px;
+            display:inline;
+            background-color: rgba(255, 255, 255, 0.05); 
+            border:none; 
+        }
+        #revive:hover{
+            background-color: rgba(240, 248, 255, 0.15);
+            
+        }
+
+        #revive-date{
+            display: none; /* Initially hidden */
+            position: absolute; /* Ensures it appears over other elements */
+            height:200px;
+            width:300px;
+            top: 50px;
+            left: 50px;
+            background-color: #191414; 
+            border:1px solid white;
+            color: white;
+            padding: 20px;
+            border-radius: 25px;
+            z-index: 1000;
+        }
+        
+
+        /* Responsive Behavior */
+        @media (max-width: 1126px) {
+            
+            .task-container {
+                width: 85%;
+                min-width: 300px;
+                left:50%;
+                top:40%;
+            }
+        }
+
+
+        /* Edit Button */
+        .edit-btn {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 5px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-left: auto; /* Pushes the button to the right */
+        }
+
+        .edit-btn:hover {
+           transform: scale(1.2);
+        }
+
+        .edit-btn svg {
+            width: 16px;
+            height: 16px;
+            fill: white;
+        }
+
+        .add-task-button{
+            padding: 5px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-left: 15px; /* Pushes the button to the right */
+        }
+
+        .modal-content {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+        }
+        .form-control, .form-select {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 12px;
+        }
+        .form-control::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+        
+
+        .btn-primary {
+            background-color:rgb(26, 141, 242) ;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+
+        .btn-primary:hover {
+            box-shadow: 1px 3px 0px  rgba(240, 248, 255, 0.368);
+            transform:scale(1.05);
+            
+        }
+
+        .btn-close {
+            filter: invert(1);
+            opacity: 0.7;
+        }
+
+        .btn-close:hover {
+            opacity: 1;
+        }
+        .form-select option{
+            color:black;
+        }
+
+        .sidebar-toggle1 {
+            background-color: #191414;
+            padding: 5px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 5px;
+            position: absolute;
+            left:14%;
+            top:3%;
+            border:1px solid whitesmoke;
+            z-index: 1000;
+           
+        }
+
+        .sidebar-toggle1:hover {
+           transform: scale(1.2);
+        }
+
+        .sidebar-toggle1 svg {
+            width: 20px;
+            height: 20px;
+            
+        }
+
+        .sidebar{
+            height : 100%;
+            width: 20%;
+            padding: 25px;
+            padding-left:50px;
+            border-radius: 25px;
+            /*backdrop-filter: blur(15px);*/
+            background-color:#191414;
+            color: white;
+            position: absolute;
+            top:50%;
+            left: 7%;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            transition: left 0.3s ease-in-out;
+            overflow-x: auto;
+        }
+        
+        .menu-items{
+            padding: 5px;
+            margin:15px 0px;
+            margin-left:10px;
+            transition : 0.2s linear;
+            font-size: 18px;
+            font-weight: 600;
+        }
+        .menu-items a{
+            margin:0px 5px;
+            color:white;
+            text-decoration: none;
+        }
+
+        .menu-items:hover {
+            transform: scale(1.2);
+        }
+
+        .sidebar.hide {
+            display:none;
+        }
+
+        .sidebar-toggle1.hide{
+            left:2%;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Video Background -->
+    <video autoplay muted loop class="video-bg">
+        <source src="static/taskvideoblur.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+
+    <!-- Sidebar Toggle Button -->
+    <button class="sidebar-toggle1" id="sidebarToggle" onclick="toggleSidebar()"><svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" 
+        viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" >
+    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+    <line x1="9" y1="3" x2="9" y2="21"></line>
+    </svg></button>
+    <div class="sidebar" id="sidebar">
+        <div class="row menu-items">
+            <div class="col-10">
+                <a href="/main"><svg style="float:left;" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M3 9L12 2L21 9V20C21 21.1 20.1 22 19 22H5C3.9 22 3 21.1 3 20V9Z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M9 22V12H15V22" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>Home</a>
+            </div>
+        </div>   
+        <div class="row menu-items">
+            <div class="col-10">
+                <a href="/today"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M8 2V5M16 2V5M3 9H21M4 4H20C21.1 4 22 4.9 22 6V20C22 21.1 21.1 22 20 22H4C2.9 22 2 21.1 2 20V6C2 4.9 2.9 4 4 4Z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <circle cx="12" cy="14" r="4" stroke="white" stroke-width="2"/>
+                  </svg>
+                Today</a>
+            </div>
+        </div>
+        
+        <div class="row menu-items">
+            <div class="col-10">
+                <a href="/completed"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M20 6L9 17L4 12" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                Completed</a>
+            </div>
+        </div>
+        <div class="row menu-items">
+            <div class="col-10">
+                <a href="/remaining"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="12" cy="12" r="10" stroke="white" stroke-width="2"/>
+                    <line x1="8" y1="12" x2="16" y2="12" stroke="white" stroke-width="2"/>
+                  </svg>
+                Remaining</a>
+            </div>
+        </div>
+        
+        <div class="row menu-items">
+            <div class="col-10">
+                <a href="/login"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M16 17L21 12L16 7" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M21 12H9" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M4 4H9V20H4V4Z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                Log Out</a>
+            </div>
+        </div>
+        
+    </div>
+
+    <!-- Task Container -->
+    <div class="task-container" id="taskContainer">
+        <h3 style="text-align:left;margin-bottom:25px;">Today's Task</h3>
+        
+        
+        <div class="row">
+            <div class="col-sm-5 col-lg-4">
+                <h5 style="display:inline-block;margin-right:70px;">Overdue</h5>
+                <button type="button" id="revive" onclick="showdiv()">
+                    Revive</button>
+                <div id="revive-date">
+                    <form action="" method="POST">
+                        <input type="hidden" name="form_name" value="revive_form">
+                        <div class="row">
+                            <div class="col-10">
+                                <label for="Date" class="form-label" style="margin-top:5px; ">
+                                    Select a Date : 
+                                </label>
+                            </div>
+                        </div>   
+                        <div class="row">
+                            <div class="col-10">
+                                <select class="form-select" name="revive-date">
+                                    <option selected hidden disabled>Select a Date within 7-Days</option>
+                                    {% for date in days_to_revive %}
+                                        <option value="{{date}}">{{date}}</option>
+                                    {% endfor %}
+                                  </select>
+                            </div>
+                        </div>  
+                        <div class="row" style="margin-top:25px;">
+                            <div class="col-6">
+                                <button type="button" class="btn btn-outline-secondary" onclick="hidediv()">
+                                    Cancel</button>
+                            </div>
+                            <div class="col-6">
+                                <button type="submit" class="btn btn-outline-primary">Submit</button>
+                            </div>
+                            
+                            
+                        </div>
+                    </form>
+                </div>
+                {% for task in tasks_yesterday %}
+                    <div class="task">
+                        <span class="task-text" style="display:inline-block">{{task[1]}}</span>
+                        <button class="edit-btn" data-bs-toggle="modal" data-bs-target="#taskModal" style="float:right"
+                        onclick="fillModal(this)"
+                        data-id="{{ task[0]}}" 
+                        data-title="{{ task[1] }}" 
+                        data-desc="{{ task[2]}}"
+                        data-project="{{ task[3]}}"
+                        data-priority="{{ task[4]}}"
+                        data-date="{{ task[5]}}"
+                        data-pomo="{{ task[6]}}">
+                            <!-- Edit SVG Icon -->
+                            <svg viewBox="0 0 24 24">
+                                <path d="M16.414 2.586a2 2 0 0 1 2.828 0l2.172 2.172a2 2 0 0 1 0 2.828l-12 12A2 2 0 0 1 8.172 20H6a2 2 0 0 1-2-2v-2.172a2 2 0 0 1 .586-1.414l12-12ZM15 6l-9 9v2h2l9-9-2-2ZM17 4l2 2 1-1-2-2-1 1Z"/>
+                            </svg>
+                        </button>
+                    </div>
+                {% endfor %}
+            </div>
+            <div class="col-sm-5 col-lg-4">
+                <h5>Today</h5>
+                {% for task in tasks_today %}
+                    <div class="task" id="{{task[0]}}">
+                        <p class="task-id" style="display:none;">{{task[0]}}</p>
+                        <p class="task-title">{{task[1]}}</p>
+                        <button class="edit-btn" data-bs-toggle="modal" data-bs-target="#taskModal" 
+                        onclick="fillModal(this)" style="float:right;"
+                        data-id="{{ task[0]}}" 
+                        data-title="{{ task[1] }}" 
+                        data-desc="{{ task[2]}}"
+                        data-project="{{ task[3]}}"
+                        data-priority="{{ task[4]}}"
+                        data-date="{{ task[5]}}"
+                        data-pomo="{{ task[6]}}">
+                            <!-- Edit SVG Icon -->
+                            <svg viewBox="0 0 24 24">
+                                <path d="M16.414 2.586a2 2 0 0 1 2.828 0l2.172 2.172a2 2 0 0 1 0 2.828l-12 12A2 2 0 0 1 8.172 20H6a2 2 0 0 1-2-2v-2.172a2 2 0 0 1 .586-1.414l12-12ZM15 6l-9 9v2h2l9-9-2-2ZM17 4l2 2 1-1-2-2-1 1Z"/>
+                            </svg>
+                        </button>
+                        <p class="task-desc">{{task[2]}}</p>
+                        <p class="task-project" style="display:none;">{{task[3]}}</p>
+                        <p class="task-priority" style="display:none;">{{task[4]}}</p>
+                        <div class="task-date">
+                            <svg 
+                                xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" 
+                                fill="none" stroke="red" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                            >
+                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                            <line x1="16" y1="2" x2="16" y2="6"></line>
+                            <line x1="8" y1="2" x2="8" y2="6"></line>
+                            <line x1="3" y1="10" x2="21" y2="10"></line>
+                            </svg>
+                            {{task[5]}}
+                        </div>
+                        <p class="task-pomo" id="{{task[6]}}">{{task[6]}} Pomodoros</p>
+                    </div>
+                {% endfor %}
+                <button type = "button"class="btn btn-outline-primary " data-bs-toggle="modal" data-bs-target="#taskModal" onclick="emptyModal()">+ Add Task</button>
+            </div>
+            
+        </div>
+            
+            
+    </div>
+
+<!-- Modal Form -->
+<div class="modal fade" id="taskModal" tabindex="-1" aria-labelledby="taskModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="taskModalLabel">Create a New Task</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="" method="POST">
+                    <input type="hidden" name="form_name" value="task_form">
+                    <input type="number" id="task_id" name="task_id" value="0" style="display:none">
+                    <div class="mb-3">
+                        <label class="form-label">Task Name</label>
+                        <input type="text" class="form-control" name="task_name" id="task_name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Description</label>
+                        <textarea class="form-control" name="task_description" id="task_description" required></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Project Name</label>
+                        <input type="text" class="form-control" name="project_name" id="project_name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Eisenhower Priority</label>
+                        <div>
+                            <input type="radio" name="priority" value="1" id="one" required> 🔥 Urgent & Important
+                            <br>
+                            <input type="radio" name="priority" value="2" id="two" > 💡 Not Urgent but Important
+                            <br>
+                            <input type="radio" name="priority" value="3" id="three" > ⏳ Urgent but Not Important
+                            <br>
+                            <input type="radio" name="priority" value="4" id="four" > 🛑 Neither Urgent nor Important
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Deadline</label>
+                        <input type="date" class="form-control" name="task_deadline" id="task_deadline" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Pomodoros Required</label>
+                        <input type="number" class="form-control" name="pomodoros" id="pomodoros" min="1" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Save Task</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+        
+
+
+
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.getElementById("sidebar");
+            const taskContainer = document.getElementById("taskContainer");
+            
+            if (sidebar.classList.contains("hide")) {
+                sidebar.classList.remove("hide");
+            } else {
+                sidebar.classList.add("hide");
+            }
+        }
+
+        // Auto-hide sidebar when screen size is small
+        document.addEventListener("DOMContentLoaded", function () {
+            const sidebar = document.getElementById("sidebar");
+
+            function checkWindowSize() {
+                if (window.innerWidth < 1126) {
+                    sidebar.classList.add("hide");
+                } else {
+                    sidebar.classList.remove("hide");
+                }
+            }
+
+            // Run once on page load
+            checkWindowSize();
+
+            // Listen for window resize
+            window.addEventListener("resize", checkWindowSize);
+        });
+        let showdiv = function(){
+            document.getElementById("revive-date").style.display = "block";
+        }
+        let hidediv = function(){
+            document.getElementById("revive-date").style.display = "none";
+        }
+        let fillModal = function(modalButton){
+            
+            
+            /*let id = parseInt(document.querySelector(".task-id").innerHTML);
+            let name = document.querySelector(".task-title").innerHTML;
+            let description = document.querySelector(".task-desc").textContent;
+            let project = document.querySelector(".task-project").textContent;
+            let priority = document.querySelector(".task-priority").innerHTML;
+            let pomo = parseInt(document.querySelector(".task-pomo").innerHTML);*/
+
+
+            var id = modalButton.getAttribute('data-id');
+            var name = modalButton.getAttribute('data-title');
+            var description = modalButton.getAttribute('data-desc');
+            var project = modalButton.getAttribute('data-project');
+            var priority = modalButton.getAttribute('data-priority');
+            var pomo = modalButton.getAttribute('data-pomo');
+            
+            // Modify the modal before showing it
+
+            let modalId = document.getElementById("task_id");
+            modalId.value = id;
+
+            let modalName = document.getElementById("task_name");
+            modalName.value = " " + name;
+
+            let modalDesc = document.getElementById("task_description");
+            modalDesc.value = " " + description;
+
+            let modalProject = document.getElementById("project_name");
+            modalProject.value = " " + project;
+            
+            if(priority==1){
+                document.getElementById("one").checked=true;
+            }
+           if(priority==2){
+            document.getElementById("two").checked=true;
+           }
+           if(priority==4){
+            document.getElementById("three").checked=true;
+           }
+           if(priority==4){
+            document.getElementById("four").checked=true;
+           }
+
+            let modalPomo = document.getElementById("pomodoros");
+            modalPomo.value = pomo;
+        }
+
+        let emptyModal = function(){
+
+            document.getElementById("task_id").value = 0;
+           
+
+            document.getElementById("task_name").value = " ";
+            
+
+            document.getElementById("task_description").value = " ";
+           
+
+            document.getElementById("project_name").value = " ";
+            
+            
+            
+            document.getElementById("one").checked=false;
+            
+           
+            document.getElementById("two").checked=false;
+           
+           
+            document.getElementById("three").checked=false;
+           
+           
+            document.getElementById("four").checked=false;
+           
+
+            document.getElementById("pomodoros").value = "";
+        }
+
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById("sidebar");
+            let sidebartoggle = document.getElementById("sidebarToggle");
+            if (sidebar.classList.contains("hide")) {
+                sidebar.classList.remove("hide");
+                sidebartoggle.classList.remove("hide");
+                
+            } else {
+                sidebar.classList.add("hide");
+                sidebartoggle.classList.add("hide");
+            }
+        }
+
+        // Auto-hide sidebar when screen size is small
+        document.addEventListener("DOMContentLoaded", function () {
+            const sidebar = document.getElementById("sidebar");
+            let sidebartoggle = document.getElementById("sidebarToggle");
+
+            function checkWindowSize() {
+                if (window.innerWidth < 1126) {
+                    sidebar.classList.add("hide");
+                    sidebartoggle.classList.add("hide");
+                } else {
+                    sidebar.classList.remove("hide");
+                    sidebartoggle.classList.remove("hide");
+                }
+            }
+
+            // Run once on page load
+            checkWindowSize();
+
+            // Listen for window resize
+            window.addEventListener("resize", checkWindowSize);
+        });
+
+    </script>
+
+</body>
+</html>
